@@ -1,0 +1,18 @@
+﻿@model SchoolProject.Models.Teacher
+@{
+    ViewBag.Title = "Show";
+}
+
+<a class="navlink" href="/Teacher/List">Back To Teachers</a>
+<h2>@Model.TeacherFName @Model.TeacherLName</h2>
+<ul>
+    <li>Employee Number: @Model.EmployeeNumber</li>
+    <li>Salary: $@Model.Salary</li>
+    <li>Hire Date: @Model.HireDate.ToString("MMMM dd, yyyy")</li>
+</ul>
+<h3>Courses</h3>
+@foreach(var course in Model.Classes)
+            {
+                <p>@course.ClassName</p>
+            }
+
