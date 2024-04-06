@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -39,7 +39,15 @@ namespace SchoolProject.Controllers
                 string ClassName = ResultSet["classname"].ToString();
                 DateTime ClassStartDate = (DateTime)ResultSet["startdate"];
                 DateTime ClassFinishDate = (DateTime)ResultSet["finishdate"];
-                int TeacherId = Convert.ToInt32(ResultSet["teacherid"]);
+                int TeacherId;
+                if (ResultSet["teacherid"] == DBNull.Value)
+                {
+                    TeacherId = 0; 
+                }
+                else
+                {
+                    TeacherId = Convert.ToInt32(ResultSet["teacherid"]);
+                }
 
                 Class NewClass = new Class();
                 NewClass.ClassId = ClassId;
@@ -88,7 +96,15 @@ namespace SchoolProject.Controllers
                 string ClassName = ResultSet["classname"].ToString();
                 DateTime ClassStartDate = (DateTime)ResultSet["startdate"];
                 DateTime ClassFinishDate = (DateTime)ResultSet["finishdate"];
-                int TeacherId = Convert.ToInt32(ResultSet["teacherid"]);
+                int TeacherId;
+                if (ResultSet["teacherid"] == DBNull.Value)
+                {
+                    TeacherId = 0; 
+                }
+                else
+                {
+                    TeacherId = Convert.ToInt32(ResultSet["teacherid"]);
+                }
 
                 NewClass.ClassId = ClassId;
                 NewClass.ClassCode = ClassCode;
