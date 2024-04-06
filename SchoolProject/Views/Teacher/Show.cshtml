@@ -4,6 +4,7 @@
 }
 
 <a class="navlink" href="/Teacher/List">Back To Teachers</a>
+<a class="dellink" href="/Teacher/DeleteConfirm/@Model.TeacherId">Delete</a>
 <h2>@Model.TeacherFName @Model.TeacherLName</h2>
 <ul>
     <li>Employee Number: @Model.EmployeeNumber</li>
@@ -11,8 +12,12 @@
     <li>Hire Date: @Model.HireDate.ToString("MMMM dd, yyyy")</li>
 </ul>
 <h3>Courses</h3>
-@foreach(var course in Model.Classes)
-            {
-                <p>@course.ClassName</p>
-            }
+@if (Model.Classes != null)
+{
+    foreach (var course in Model.Classes)
+    {
+        <p>@course.ClassName</p>
+    }
+}
+
 

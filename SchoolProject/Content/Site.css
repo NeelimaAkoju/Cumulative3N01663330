@@ -11,3 +11,17 @@ select,
 textarea {
     max-width: 280px;
 }
+
+.dellink {
+    color: #dd1111;
+    float: right;
+}
+
+.delbutton {
+    display: block;
+    margin: 0 auto;
+    background: #dd1111;
+    color: #fff;
+    border: 2px solid #000;
+    border-radius: 3px;
+}

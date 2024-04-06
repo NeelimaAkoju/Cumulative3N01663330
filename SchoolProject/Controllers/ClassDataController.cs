@@ -103,5 +103,21 @@ namespace SchoolProject.Controllers
             return NewClass;
         }
 
+        public void updateClass(int teacherId)
+        {
+
+            //Create an instance of a connection
+            MySqlConnection Conn = School.AccessDatabase();
+            Conn.Open();
+            MySqlCommand cmd = Conn.CreateCommand();
+            cmd.CommandText = "UPDATE classes set teacherid = null WHERE teacherid = @id";
+            cmd.Parameters.AddWithValue("@id", teacherId);
+            cmd.Prepare();
+
+            cmd.ExecuteNonQuery();
+            Conn.Close();
+
+        }
+
     }
 }
