@@ -1,4 +1,4 @@
-﻿using MySql.Data.MySqlClient;
+using MySql.Data.MySqlClient;
 using SchoolProject.Models;
 using System;
 using System.Collections.Generic;
@@ -109,16 +109,38 @@ namespace SchoolProject.Controllers
                 Teacher.EmployeeNumber = TeacherEmployeeNumber;
                 Teacher.HireDate = TeacherHireDate;
                 Teacher.Salary = TeacherSalary;
-                int ClassId = 0;
-                if (!ResultSet["classid"].Equals(null))
+                int ClassId;
+                if (ResultSet["classid"] == DBNull.Value)
                 {
-                   ClassId = Convert.ToInt32(ResultSet["classid"]);
+                    ClassId = 0; 
                 }
-                
+                else
+                {
+                    ClassId = Convert.ToInt32(ResultSet["classid"]);
+                }
+
+
                 string ClassCode = ResultSet["classcode"].ToString();
                 string ClassName = ResultSet["classname"].ToString();
-                DateTime ClassStartDate = (DateTime)ResultSet["startdate"];
-                DateTime ClassFinishDate = (DateTime)ResultSet["finishdate"];
+                DateTime ClassStartDate;
+                if (ResultSet["startdate"] == DBNull.Value)
+                {
+                    ClassStartDate = DateTime.MinValue; 
+                }
+                else
+                {
+                    ClassStartDate = (DateTime)ResultSet["startdate"];
+                }
+
+                DateTime ClassFinishDate;
+                if (ResultSet["finishdate"] == DBNull.Value)
+                {
+                    ClassFinishDate = DateTime.MinValue; 
+                }
+                else
+                {
+                    ClassFinishDate = (DateTime)ResultSet["finishdate"];
+                }
 
                 Class NewClass = new Class();
                 NewClass.ClassId = ClassId;
@@ -156,7 +178,7 @@ namespace SchoolProject.Controllers
         /// }
         /// </example>
         [HttpPost]
-        [EnableCors(origins: "*", methods: "*", headers: "*")]
+        [EnableCors(origins: "", methods: "", headers: "*")]
         public void AddTeacher([FromBody]Teacher NewTeacher)
         {
             if (NewTeacher.EmployeeNumber != null)
@@ -201,7 +223,7 @@ namespace SchoolProject.Controllers
         /// <param name="id">The ID of the author.</param>
         /// <example>POST /api/TeacherData/DeleteTeacher/3</example>
         [HttpPost]
-        [EnableCors(origins: "*", methods: "*", headers: "*")]
+        [EnableCors(origins: "", methods: "", headers: "*")]
         public void DeleteTeacher(int id)
         {
             //Create an instance of a connection
