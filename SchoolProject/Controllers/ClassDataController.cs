@@ -39,23 +39,23 @@ namespace SchoolProject.Controllers
                 string ClassName = ResultSet["classname"].ToString();
                 DateTime ClassStartDate = (DateTime)ResultSet["startdate"];
                 DateTime ClassFinishDate = (DateTime)ResultSet["finishdate"];
-                int TeacherId;
+
+                Class NewClass = new Class();
+
                 if (ResultSet["teacherid"] == DBNull.Value)
                 {
-                    TeacherId = 0; 
+                    NewClass.TeacherId = 0;
                 }
                 else
                 {
-                    TeacherId = Convert.ToInt32(ResultSet["teacherid"]);
+                    NewClass.TeacherId = Convert.ToInt32(ResultSet["teacherid"]);
                 }
-
-                Class NewClass = new Class();
+                
                 NewClass.ClassId = ClassId;
                 NewClass.ClassCode = ClassCode;
                 NewClass.ClassName = ClassName;
                 NewClass.StartDate = ClassStartDate;
                 NewClass.FinishDate = ClassFinishDate;
-                NewClass.TeacherId = TeacherId;
 
                 //Add the Class to the List
                 Classes.Add(NewClass);
@@ -80,7 +80,6 @@ namespace SchoolProject.Controllers
         [Route("api/ClassData/FindClass/{id}")]
         public Class FindClass(int id)
         {
-            Class NewClass = new Class();
 
             //Create an instance of a connection
             MySqlConnection Conn = School.AccessDatabase();
@@ -89,6 +88,8 @@ namespace SchoolProject.Controllers
             cmd.CommandText = "SELECT * FROM classes WHERE classid = " + id.ToString() + ";";
             MySqlDataReader ResultSet = cmd.ExecuteReader();
 
+            Class NewClass = new Class();
+
             while (ResultSet.Read())
             {
                 int ClassId = Convert.ToInt32(ResultSet["classid"]);
@@ -96,14 +97,14 @@ namespace SchoolProject.Controllers
                 string ClassName = ResultSet["classname"].ToString();
                 DateTime ClassStartDate = (DateTime)ResultSet["startdate"];
                 DateTime ClassFinishDate = (DateTime)ResultSet["finishdate"];
-                int TeacherId;
+
                 if (ResultSet["teacherid"] == DBNull.Value)
                 {
-                    TeacherId = 0; 
+                    NewClass.TeacherId = 0;
                 }
                 else
                 {
-                    TeacherId = Convert.ToInt32(ResultSet["teacherid"]);
+                    NewClass.TeacherId = Convert.ToInt32(ResultSet["teacherid"]);
                 }
 
                 NewClass.ClassId = ClassId;
@@ -111,7 +112,6 @@ namespace SchoolProject.Controllers
                 NewClass.ClassName = ClassName;
                 NewClass.StartDate = ClassStartDate;
                 NewClass.FinishDate = ClassFinishDate;
-                NewClass.TeacherId = TeacherId;
             }
             //Close the connection between the MySQL Database and the WebServer
             Conn.Close();
