@@ -1,4 +1,4 @@
-﻿using SchoolProject.Models;
+using SchoolProject.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,7 +39,6 @@ namespace SchoolProject.Controllers
         }
 
         // POST : Teacher/Create 
-
         public ActionResult Create(string TeacherFname, string TeacherLname, string EmployeeNumber, string HireDate, decimal salary)
         {
             Teacher NewTeacher = new Teacher();
@@ -50,8 +49,13 @@ namespace SchoolProject.Controllers
             NewTeacher.Salary = salary;
 
             TeacherDataController dataController = new TeacherDataController();
-            dataController.AddTeacher(NewTeacher);
-
+            Boolean success =  dataController.AddTeacher(NewTeacher);
+            if (!success)
+            {
+                //if employee number already exists return back to the add page
+                return RedirectToAction("New");
+            }
+            //else return to list 
             return RedirectToAction("List");
         }
 
@@ -64,7 +68,6 @@ namespace SchoolProject.Controllers
             return View(TeacherDetails);
         }
 
-
         //POST : /Author/Delete/{id}
         [HttpPost]
         public ActionResult Delete(int id)
@@ -75,8 +78,6 @@ namespace SchoolProject.Controllers
             classController.updateClass(id);
             return RedirectToAction("List");
         }
-
-
 
     }
 }
