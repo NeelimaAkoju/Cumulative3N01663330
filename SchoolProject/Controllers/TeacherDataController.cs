@@ -1,3 +1,4 @@
+using Microsoft.Ajax.Utilities;
 using MySql.Data.MySqlClient;
 using SchoolProject.Models;
 using System;
@@ -94,7 +95,7 @@ namespace SchoolProject.Controllers
             cmd.CommandText = "SELECT * FROM teachers LEFT JOIN classes ON teachers.teacherid= classes.teacherid WHERE teachers.teacherid = " + id.ToString() + ";";
             MySqlDataReader ResultSet = cmd.ExecuteReader();
 
-            while (ResultSet.Read())
+            while (ResultSet.Read() && ResultSet.HasRows)
             {
                 int TeacherId = Convert.ToInt32(ResultSet["teacherid"]);
                 string TeacherFname = ResultSet["teacherfname"].ToString();
@@ -109,38 +110,38 @@ namespace SchoolProject.Controllers
                 Teacher.EmployeeNumber = TeacherEmployeeNumber;
                 Teacher.HireDate = TeacherHireDate;
                 Teacher.Salary = TeacherSalary;
+
                 int ClassId;
                 if (ResultSet["classid"] == DBNull.Value)
                 {
-                    ClassId = 0; 
+                    ClassId = 0;
                 }
                 else
                 {
                     ClassId = Convert.ToInt32(ResultSet["classid"]);
                 }
 
-
                 string ClassCode = ResultSet["classcode"].ToString();
                 string ClassName = ResultSet["classname"].ToString();
                 DateTime ClassStartDate;
                 if (ResultSet["startdate"] == DBNull.Value)
                 {
-                    ClassStartDate = DateTime.MinValue; 
+                    ClassStartDate = DateTime.MinValue;
                 }
                 else
                 {
                     ClassStartDate = (DateTime)ResultSet["startdate"];
                 }
-
                 DateTime ClassFinishDate;
                 if (ResultSet["finishdate"] == DBNull.Value)
                 {
-                    ClassFinishDate = DateTime.MinValue; 
+                    ClassFinishDate = DateTime.MinValue;
                 }
                 else
                 {
                     ClassFinishDate = (DateTime)ResultSet["finishdate"];
                 }
+                
 
                 Class NewClass = new Class();
                 NewClass.ClassId = ClassId;
@@ -178,42 +179,51 @@ namespace SchoolProject.Controllers
         /// }
         /// </example>
         [HttpPost]
-        [EnableCors(origins: "", methods: "", headers: "*")]
-        public void AddTeacher([FromBody]Teacher NewTeacher)
+        [EnableCors(origins: "*", methods: "*", headers: "*")]
+        public Boolean AddTeacher([FromBody]Teacher NewTeacher)
         {
-            if (NewTeacher.EmployeeNumber != null)
+            try
             {
-                List<Teacher> teacher = ListTeachers(NewTeacher.EmployeeNumber);
-                if (teacher.Count > 0)
-                {
-                  
-                }
-                else
-                {
-                    //Create an instance of a connection
-                    MySqlConnection Conn = School.AccessDatabase();
+                    // To check if the employeeNumber already exists.
+                    List<Teacher> teacher = ListTeachers(NewTeacher.EmployeeNumber);
+                    if (teacher.Count > 0)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        //Create an instance of a connection
+                        MySqlConnection Conn = School.AccessDatabase();
 
-                    //Open the connection between the web server and database
-                    Conn.Open();
+                        //Open the connection between the web server and database
+                        Conn.Open();
 
-                    //Establish a new command (query) for our database
-                    MySqlCommand cmd = Conn.CreateCommand();
-                    
-                    //Query to add teacher into DB
-                    cmd.CommandText = "insert into teachers (teacherfname, teacherlname, employeenumber, hiredate, salary) values (@teacherfname, @teacherlname, @employeenumber, @hiredate, @salary)";
-                    cmd.Parameters.AddWithValue("@teacherfname", NewTeacher.TeacherFName);
-                    cmd.Parameters.AddWithValue("@teacherlname", NewTeacher.TeacherLName);
-                    cmd.Parameters.AddWithValue("@employeenumber", NewTeacher.EmployeeNumber);
-                    cmd.Parameters.AddWithValue("@hiredate", NewTeacher.HireDate);
-                    cmd.Parameters.AddWithValue("@salary", NewTeacher.Salary);
+                        //Establish a new command (query) for our database
+                        MySqlCommand cmd = Conn.CreateCommand();
 
-                    cmd.Prepare();
+                        //Query to add teacher into DB
+                        cmd.CommandText = "insert into teachers (teacherfname, teacherlname, employeenumber, hiredate, salary) values (@teacherfname, @teacherlname, @employeenumber, @hiredate, @salary)";
+                        cmd.Parameters.AddWithValue("@teacherfname", NewTeacher.TeacherFName);
+                        cmd.Parameters.AddWithValue("@teacherlname", NewTeacher.TeacherLName);
+                        cmd.Parameters.AddWithValue("@employeenumber", NewTeacher.EmployeeNumber);
+                        cmd.Parameters.AddWithValue("@hiredate", NewTeacher.HireDate);
+                        cmd.Parameters.AddWithValue("@salary", NewTeacher.Salary);
 
-                    cmd.ExecuteNonQuery();
+                        cmd.Prepare();
 
-                    Conn.Close();
-                }
+                        cmd.ExecuteNonQuery();
+
+                        Conn.Close();
+                        return true;
+                    }
+                
             }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("There is server issue.", ex);
+            }
+            
+            
             
         }
 
@@ -223,7 +233,7 @@ namespace SchoolProject.Controllers
         /// <param name="id">The ID of the author.</param>
         /// <example>POST /api/TeacherData/DeleteTeacher/3</example>
         [HttpPost]
-        [EnableCors(origins: "", methods: "", headers: "*")]
+        [EnableCors(origins: "*", methods: "*", headers: "*")]
         public void DeleteTeacher(int id)
         {
             //Create an instance of a connection
@@ -243,8 +253,6 @@ namespace SchoolProject.Controllers
             cmd.ExecuteNonQuery();
 
             Conn.Close();
-
-
         }
 
     }
