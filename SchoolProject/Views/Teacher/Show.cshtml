@@ -1,4 +1,4 @@
-﻿@model SchoolProject.Models.Teacher
+@model SchoolProject.Models.Teacher
 @{
     ViewBag.Title = "Show";
 }
@@ -16,8 +16,14 @@
 {
     foreach (var course in Model.Classes)
     {
-        <p>@course.ClassName</p>
+        if (course.ClassId == 0)
+        {
+            <p>No Courses Aligned.</p>
+        }
+        else
+        {
+            <p>@course.ClassName</p>
+        }
+
     }
 }
-
-
