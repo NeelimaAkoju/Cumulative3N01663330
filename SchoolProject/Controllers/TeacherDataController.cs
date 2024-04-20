@@ -28,7 +28,7 @@ namespace SchoolProject.Controllers
         /// </returns>
         [HttpGet]
         [Route("api/TeacherData/ListTeachers/{SearchKey}")]
-        public List<Teacher> ListTeachers(string SearchKey=null)
+        public List<Teacher> ListTeachers(string SearchKey = null)
         {
             //Create an instance of a connection
             MySqlConnection Conn = School.AccessDatabase();
@@ -38,7 +38,7 @@ namespace SchoolProject.Controllers
 
             //Establish a new command (query) for our database
             MySqlCommand cmd = Conn.CreateCommand();
-            
+
             //SQL QUERY
             cmd.CommandText = "Select * from Teachers where lower(teacherlname) like lower(@key) or lower(employeenumber) like lower(@key) or lower(teacherfname) like lower(@key) or lower(concat(teacherfname, ' ', teacherlname)) like lower(@key)";
             cmd.Parameters.AddWithValue("@key", "%" + SearchKey + "%");
@@ -141,7 +141,7 @@ namespace SchoolProject.Controllers
                 {
                     ClassFinishDate = (DateTime)ResultSet["finishdate"];
                 }
-                
+
 
                 Class NewClass = new Class();
                 NewClass.ClassId = ClassId;
@@ -149,7 +149,7 @@ namespace SchoolProject.Controllers
                 NewClass.ClassName = ClassName;
                 NewClass.StartDate = ClassStartDate;
                 NewClass.FinishDate = ClassFinishDate;
-            
+
                 //Add the Class details to the List
                 Classes.Add(NewClass);
                 Teacher.Classes = Classes;
@@ -180,51 +180,48 @@ namespace SchoolProject.Controllers
         /// </example>
         [HttpPost]
         [EnableCors(origins: "*", methods: "*", headers: "*")]
-        public Boolean AddTeacher([FromBody]Teacher NewTeacher)
+        public Boolean AddTeacher([FromBody] Teacher NewTeacher)
         {
             try
             {
-                    // To check if the employeeNumber already exists.
-                    List<Teacher> teacher = ListTeachers(NewTeacher.EmployeeNumber);
-                    if (teacher.Count > 0)
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        //Create an instance of a connection
-                        MySqlConnection Conn = School.AccessDatabase();
+                // To check if the employeeNumber already exists.
+                List<Teacher> teacher = ListTeachers(NewTeacher.EmployeeNumber);
+                if (teacher.Count > 0)
+                {
+                    return false;
+                }
+                else
+                {
+                    //Create an instance of a connection
+                    MySqlConnection Conn = School.AccessDatabase();
 
-                        //Open the connection between the web server and database
-                        Conn.Open();
+                    //Open the connection between the web server and database
+                    Conn.Open();
 
-                        //Establish a new command (query) for our database
-                        MySqlCommand cmd = Conn.CreateCommand();
+                    //Establish a new command (query) for our database
+                    MySqlCommand cmd = Conn.CreateCommand();
 
-                        //Query to add teacher into DB
-                        cmd.CommandText = "insert into teachers (teacherfname, teacherlname, employeenumber, hiredate, salary) values (@teacherfname, @teacherlname, @employeenumber, @hiredate, @salary)";
-                        cmd.Parameters.AddWithValue("@teacherfname", NewTeacher.TeacherFName);
-                        cmd.Parameters.AddWithValue("@teacherlname", NewTeacher.TeacherLName);
-                        cmd.Parameters.AddWithValue("@employeenumber", NewTeacher.EmployeeNumber);
-                        cmd.Parameters.AddWithValue("@hiredate", NewTeacher.HireDate);
-                        cmd.Parameters.AddWithValue("@salary", NewTeacher.Salary);
+                    //Query to add teacher into DB
+                    cmd.CommandText = "insert into teachers (teacherfname, teacherlname, employeenumber, hiredate, salary) values (@teacherfname, @teacherlname, @employeenumber, @hiredate, @salary)";
+                    cmd.Parameters.AddWithValue("@teacherfname", NewTeacher.TeacherFName);
+                    cmd.Parameters.AddWithValue("@teacherlname", NewTeacher.TeacherLName);
+                    cmd.Parameters.AddWithValue("@employeenumber", NewTeacher.EmployeeNumber);
+                    cmd.Parameters.AddWithValue("@hiredate", NewTeacher.HireDate);
+                    cmd.Parameters.AddWithValue("@salary", NewTeacher.Salary);
 
-                        cmd.Prepare();
+                    cmd.Prepare();
 
-                        cmd.ExecuteNonQuery();
+                    cmd.ExecuteNonQuery();
 
-                        Conn.Close();
-                        return true;
-                    }
-                
+                    Conn.Close();
+                    return true;
+                }
+
             }
             catch (Exception ex)
             {
                 throw new ApplicationException("There is server issue.", ex);
             }
-            
-            
-            
         }
 
         /// <summary>
@@ -253,6 +250,55 @@ namespace SchoolProject.Controllers
             cmd.ExecuteNonQuery();
 
             Conn.Close();
+        }
+
+        /// <summary>
+        /// Updates the information of a specific teacher in the MySQL Database.
+        /// </summary>
+        /// <param name="id">The ID of the teacher to update.</param>
+        /// <param name="Teacher">An object containing the updated information of the teacher.</param>
+        /// <example>
+        /// Example curl request: curl -d @testdata.json -H "Content-Type: application/json" http://localhost63364/api/TeacherData/UpdateTeacher/2
+        /// Example of POST request body:
+        /// POST /api/TeacherData/UpdateTeacher/2
+        /// </example>
+        [HttpPost]
+        [EnableCors(origins: "*", methods: "*", headers: "*")]
+        [Route("api/TeacherData/UpdateTeacher/{id}")]
+        public void UpdateTeacher(int id, [FromBody] Teacher Teacher)
+        {
+            try
+            {
+                //Create an instance of a connection
+                MySqlConnection Conn = School.AccessDatabase();
+
+                //Open the connection between the web server and database
+                Conn.Open();
+
+                //Establish a new command (query) for our database
+                MySqlCommand cmd = Conn.CreateCommand();
+
+                //SQL QUERY
+                cmd.CommandText = "UPDATE teachers SET teacherfname=@TeacherFname, teacherlname=@TeacherLname, employeenumber=@EmployeeNumber, hiredate=@HireDate, salary=@Salary  where teacherid=@TeacherId";
+                cmd.Parameters.AddWithValue("@TeacherFname", Teacher.TeacherFName);
+                cmd.Parameters.AddWithValue("@TeacherLname", Teacher.TeacherLName);
+                cmd.Parameters.AddWithValue("@EmployeeNumber", Teacher.EmployeeNumber);
+                cmd.Parameters.AddWithValue("@HireDate", Teacher.HireDate);
+                cmd.Parameters.AddWithValue("@Salary", Teacher.Salary);
+                cmd.Parameters.AddWithValue("@TeacherId", id);
+                cmd.Prepare();
+
+                cmd.ExecuteNonQuery();
+
+                Conn.Close();
+
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("There is server issue.", ex);
+            }
+
+
         }
 
     }

@@ -1,0 +1,77 @@
+﻿@model SchoolProject.Models.Teacher
+@{
+    ViewBag.Title = "Update";
+}
+
+<script>
+    window.onload = () => {
+        var updateForm = document.forms.updateTeacher;
+        updateForm.onsubmit = () => {
+            var employeeFname = updateForm.TeacherFname;
+            var employeeLname = updateForm.TeacherLname;
+            var employeeNumber = updateForm.EmployeeNumber;
+            var hireDate = updateForm.HireDate;
+            var salary = updateForm.Salary;
+
+            if (employeeFname.value === "") {
+                var fnameError = document.getElementById("name_error_msg");
+                fnameError.innerHTML = "Please enter valid first name.";
+                return false;
+            } else if (employeeLname.value === "") {
+                var lnameError = document.getElementById("lastName_error_msg");
+                lnameError.innerHTML = "Please enter valid last name.";
+                return false;
+            } else if (employeeNumber.value === "") {
+                var empNumbError = document.getElementById("empNumb_error_msg");
+                empNumbError.innerHTML = "Please enter valid Employee Number.";
+                return false;
+            } else if (hireDate.value === "") {
+                var hireDateError = document.getElementById("hireDate_error_msg");
+                hireDateError.innerHTML = "Please enter valid hire date.";
+                return false;
+            } else if (salary.value === "" || salary.value === 0) {
+                var salaryError = document.getElementById("salary_error_msg");
+                salaryError.innerHTML = "Please enter valid salary."
+                return false;
+            }
+        }
+    }
+</script>
+
+<h2>Update</h2>
+
+<div id="containershow">
+    <nav class="my-3">
+        <a class="navlink" href="/Teacher/show/@Model.TeacherId">Back To Teacher</a>
+    </nav>
+    <h2>Update Teacher</h2>
+
+    <form method="POST" action="/Teacher/Update/@Model.TeacherId" name="updateTeacher">
+        <div class="form-group">
+            <label for="TeacherFname">First Name:</label>
+            <input type="text" class="form-control" id="TeacherFname" name="TeacherFname" placeholder="Enter first name" value="@Model.TeacherFName" />
+            <span id="name_error_msg" class="error_msg"></span>
+        </div>
+        <div class="mt-2 form-group">
+            <label for="TeacherLname">Last Name:</label>
+            <input type="text" class="form-control" id="TeacherLname" name="TeacherLname" placeholder="Enter last name" value="@Model.TeacherLName" />
+            <span id="lastName_error_msg" class="error_msg"></span>
+        </div>
+        <div class="mt-2 form-group">
+            <label for="EmployeeNumber">Employee Number:</label>
+            <input type="text" class="form-control" id="EmployeeNumber" name="EmployeeNumber" placeholder="Enter employee number" value="@Model.EmployeeNumber" />
+            <span id="empNumb_error_msg" class="error_msg"></span>
+        </div>
+        <div class="mt-2 form-group">
+            <label for="HireDate">Hire Date:</label>
+            <input type="date" class="form-control" id="HireDate" name="HireDate" value="@Model.HireDate.ToString("yyyy-MM-dd")" />
+            <span id="hireDate_error_msg" class="error_msg"></span>
+        </div>
+        <div class="mt-2 form-group">
+            <label for="Salary">Salary:</label>
+            <input type="number" step=".01" class="form-control" id="Salary" name="Salary" placeholder="Enter salary" value="@Model.Salary" />
+            <span id="salary_error_msg" class="error_msg"></span>
+        </div>
+        <button type="submit">Update Teacher</button>
+    </form>
+</div>
